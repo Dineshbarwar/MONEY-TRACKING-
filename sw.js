@@ -1,23 +1,14 @@
-const CACHE_NAME = 'money-tracker-v1';
-const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+// This app no longer uses a service worker (it caused stale-version issues).
+// This file's only job is to clean up any old service worker that earlier
+// versions of the app registered on this device, then get out of the way.
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
-  );
+self.addEventListener('activate', async () => {
+  try {
+    await self.registration.unregister();
+    const clientsList = await self.clients.matchAll({ type: 'window' });
+    clientsList.forEach((client) => client.navigate(client.url));
+  } catch (e) { /* ignore */ }
 });

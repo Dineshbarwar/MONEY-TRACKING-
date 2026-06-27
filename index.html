@@ -353,6 +353,19 @@
 
 <script>
 (function(){
+  // One-time cleanup: remove any old service worker / cache from earlier
+  // versions of this app so the installed icon stops serving stale content.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((regs) => {
+      regs.forEach((reg) => reg.unregister());
+    }).catch(()=>{});
+  }
+  if ('caches' in window) {
+    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(()=>{});
+  }
+})();
+
+(function(){
   const $ = (id) => document.getElementById(id);
   const STORAGE_KEY = 'dinesh-tracker-v2';
   const PALETTE = ['#b3502f','#b9842c','#4f6e49','#5b7fa6','#8a5fa3','#c2785c','#3f8f86','#a14b6d','#7d8c3c','#bb6b9b'];
@@ -696,10 +709,6 @@
   }
 
   loadState();
-
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
-  }
 })();
 </script>
 </body>
