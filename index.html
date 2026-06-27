@@ -7,12 +7,12 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#15301f">
+<meta name="theme-color" content="#202020">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Money Tracker">
 <style>
-  html, body { margin:0; padding:0; background:#15301f; }
+  html, body { margin:0; padding:0; background:#202020; }
 </style>
 </head>
 <body>
@@ -21,110 +21,100 @@
 
 .tracker-app * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 .tracker-app {
-  --ink: #211f1a;
-  --muted: #6f6657;
-  --cover: #15301f;
-  --cover-light: #244a32;
-  --paper: #f8f2e3;
-  --paper-line: #ddd2b3;
-  --rust: #b3502f;
-  --gold: #b9842c;
-  --brick: #9c3f33;
-  --sage: #4f6e49;
-  --sage-light: #e3ead9;
-  --brick-light: #f3e2de;
+  --sage: #4f6e49; --sage-light: #e3ead9;
+  --brick: #9c3f33; --brick-light: #f3e2de;
   font-family: 'Inter', sans-serif;
   color: var(--ink);
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--paper);
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: none;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
+/* ---- Theme tokens ---- */
+.tracker-app[data-theme="green"] { --cover:#15301f; --cover-light:#244a32; --paper:#f8f2e3; --paper-line:#ddd2b3; --accent:#b3502f; --accent2:#b9842c; --ink:#211f1a; --muted:#6f6657; }
+.tracker-app[data-theme="yellow"] { --cover:#7a5a12; --cover-light:#9c7a1e; --paper:#fffaeb; --paper-line:#ecd9a0; --accent:#c9821a; --accent2:#a9690f; --ink:#2c2410; --muted:#7a6a3c; }
+.tracker-app[data-theme="red"] { --cover:#5c1413; --cover-light:#7c2422; --paper:#fdf2f0; --paper-line:#e8c7c2; --accent:#b8312f; --accent2:#8c1c1c; --ink:#2a1414; --muted:#8a6360; }
+.tracker-app[data-theme="white"] { --cover:#202020; --cover-light:#383838; --paper:#ffffff; --paper-line:#e2e2e2; --accent:#b3502f; --accent2:#9c8025; --ink:#1c1c1c; --muted:#767676; }
+.tracker-app[data-theme="blue"] { --cover:#15314f; --cover-light:#234a73; --paper:#eff5fb; --paper-line:#c9dced; --accent:#2f6fa8; --accent2:#3f87b8; --ink:#16222c; --muted:#5d7588; }
+
 @media (min-width: 480px) {
-  .tracker-app {
-    max-width: 430px;
-    margin: 24px auto;
-    min-height: auto;
-    border-radius: 16px;
-    box-shadow: 0 0 0 1px var(--paper-line), 0 14px 30px rgba(20,18,14,0.14);
-  }
+  .tracker-app { max-width: 430px; height: 800px; margin: 24px auto; border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 1px var(--paper-line), 0 16px 34px rgba(20,18,14,0.18); }
 }
 
 .mono { font-family: 'IBM Plex Mono', monospace; }
+.display { font-family: 'Fraunces', serif; }
 
-/* ---- Header ---- */
-.tk-head {
+/* ---- Screens wrapper ---- */
+.tk-screens {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 41px, var(--paper-line) 41px, var(--paper-line) 42px);
+  background-position: 0 96px;
+}
+.tk-screen { display: none; padding-bottom: 24px; }
+.tk-screen.active { display: block; }
+
+/* ---- Top header per screen ---- */
+.tk-top {
   background: linear-gradient(165deg, var(--cover), var(--cover-light));
   color: #f3ead2;
   padding: 18px 18px 16px;
 }
-.tk-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; margin: 0 0 12px; }
+.tk-top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tk-greet { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.tk-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,0.14); display:flex; align-items:center; justify-content:center;
+  overflow: hidden; border: 1.5px solid rgba(255,255,255,0.3); cursor: pointer;
+}
+.tk-avatar img { width:100%; height:100%; object-fit:cover; }
+.tk-avatar svg { width:20px; height:20px; color:#f3ead2; }
+.tk-greet-text { min-width:0; }
+.tk-greet-name { font-family:'Fraunces', serif; font-weight:600; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tk-greet-sub { font-size:11px; color:#cdbb8c; }
+.tk-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; margin: 0; }
+
 .tk-month {
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255,255,255,0.08);
-  border-radius: 10px;
-  padding: 6px 6px 6px 14px;
+  background: rgba(255,255,255,0.08); border-radius: 10px; padding: 6px 6px 6px 14px; margin-top: 14px;
 }
 .tk-month-label { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; }
-.tk-arrow {
-  background: rgba(255,255,255,0.12);
-  border: none; color: #f3ead2; width: 30px; height: 30px;
-  border-radius: 8px; font-size: 16px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
+.tk-arrow { background: rgba(255,255,255,0.12); border: none; color: #f3ead2; width: 30px; height: 30px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .tk-arrow:hover { background: rgba(255,255,255,0.22); }
-.tk-cat-link { background:none; border:none; color:#cdbb8c; font-size:11.5px; text-decoration:underline; cursor:pointer; padding:10px 0 0; }
 
 /* ---- Summary ---- */
 .tk-summary { display: flex; gap: 10px; padding: 14px 16px; }
 .tk-card { flex: 1; background: #fffdf7; border: 1px solid var(--paper-line); border-radius: 10px; padding: 10px 12px; }
+.tracker-app[data-theme="white"] .tk-card { background: #fafafa; }
 .tk-card .lbl { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .tk-card .amt { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 15px; margin-top: 3px; }
 .tk-card.income .amt { color: var(--sage); }
 .tk-card.expense .amt { color: var(--brick); }
 .tk-card.net .amt { color: var(--ink); }
 
-/* ---- Add button ---- */
-.tk-add-btn {
-  display: block; width: calc(100% - 32px); margin: 4px 16px 16px;
-  background: var(--rust); color: #fff7ef; border: none;
-  padding: 12px; border-radius: 10px; font-weight: 600; font-size: 14px;
-  font-family: 'Inter', sans-serif; cursor: pointer;
-}
+.tk-add-btn { display: block; width: calc(100% - 32px); margin: 4px 16px 16px; background: var(--accent); color: #fff7ef; border: none; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif; cursor: pointer; }
 .tk-add-btn:active { transform: scale(0.98); }
 
-/* ---- Breakdown ---- */
 .tk-section { padding: 4px 16px 14px; }
+.tk-section h3 { font-family:'Fraunces', serif; font-size:15px; margin:14px 0 10px; }
 .tk-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-.tk-tab {
-  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
-  background: #fffdf7; border: 1px solid var(--paper-line); color: var(--muted);
-  padding: 6px 12px; border-radius: 999px; cursor: pointer;
-}
-.tk-tab.active { background: var(--ink); color: #f8f2e3; border-color: var(--ink); }
+.tk-tab { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; background: #fffdf7; border: 1px solid var(--paper-line); color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.tracker-app[data-theme="white"] .tk-tab { background:#fafafa; }
+.tk-tab.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .tk-bd-row { margin-bottom: 9px; }
 .tk-bd-top { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px; }
 .tk-bd-name { display: flex; align-items: center; gap: 6px; font-weight: 600; }
 .tk-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .tk-bd-amt { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
-.tk-bd-track { background: #ece3cb; border-radius: 5px; height: 7px; overflow: hidden; }
+.tk-bd-track { background: rgba(0,0,0,0.08); border-radius: 5px; height: 7px; overflow: hidden; }
 .tk-bd-fill { height: 100%; border-radius: 5px; }
 .tk-empty { font-size: 12.5px; color: var(--muted); font-style: italic; text-align: center; padding: 14px 0; }
 
-/* ---- Transactions ---- */
-.tk-day-group { margin-bottom: 4px; }
-.tk-day-label {
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted);
-  padding: 10px 16px 4px; background: var(--paper);
-}
-.tk-tx {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px; border-bottom: 1px dashed var(--paper-line);
-  background: var(--paper);
-}
+.tk-day-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); padding: 10px 16px 4px; }
+.tk-tx { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px dashed var(--paper-line); }
 .tk-tx-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .tk-tx-body { flex: 1; min-width: 0; }
 .tk-tx-cat { font-size: 13px; font-weight: 600; }
@@ -132,215 +122,259 @@
 .tk-tx-amt { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
 .tk-tx-amt.income { color: var(--sage); }
 .tk-tx-amt.expense { color: var(--brick); }
-.tk-del {
-  background: none; border: none; color: var(--muted); font-size: 11px;
-  padding: 4px 7px; border-radius: 6px; cursor: pointer; flex-shrink: 0;
-}
+.tk-del { background: none; border: none; color: var(--muted); font-size: 11px; padding: 4px 7px; border-radius: 6px; cursor: pointer; flex-shrink: 0; }
 .tk-del.confirm { background: var(--brick-light); color: var(--brick); font-weight: 600; }
 
-/* ---- Modal ---- */
-.tk-overlay {
-  position: fixed; inset: 0; background: rgba(20,18,14,0.55);
-  display: none; align-items: flex-end; justify-content: center; z-index: 50;
-}
-.tk-overlay.show { display: flex; }
-.tk-modal {
-  background: var(--paper); width: 100%; max-width: 430px;
-  border-radius: 18px 18px 0 0; padding: 18px 18px 22px;
-  max-height: 86vh; overflow-y: auto;
-}
-.tk-modal h3 { font-family: 'Fraunces', serif; font-size: 17px; margin: 0 0 14px; }
+/* ---- Add screen ---- */
 .tk-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
-.tk-toggle button {
-  flex: 1; padding: 10px; border-radius: 9px; border: 1px solid var(--paper-line);
-  background: #fffdf7; font-weight: 600; font-size: 13px; cursor: pointer; color: var(--muted);
-}
+.tk-toggle button { flex: 1; padding: 10px; border-radius: 9px; border: 1px solid var(--paper-line); background: #fffdf7; font-weight: 600; font-size: 13px; cursor: pointer; color: var(--muted); }
 .tk-toggle button.sel.income { background: var(--sage-light); border-color: var(--sage); color: var(--sage); }
 .tk-toggle button.sel.expense { background: var(--brick-light); border-color: var(--brick); color: var(--brick); }
 .tk-field { margin-bottom: 14px; }
 .tk-field label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
-.tk-amt-input {
-  font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 700;
-  border: none; border-bottom: 2px solid var(--rust); background: transparent;
-  width: 100%; padding: 4px 2px; outline: none;
-}
+.tk-amt-input { font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 700; border: none; border-bottom: 2px solid var(--accent); background: transparent; width: 100%; padding: 4px 2px; outline: none; color: var(--ink); }
 .tk-text-input, .tk-date-input {
   width: 100%; font-family: 'Inter', sans-serif; font-size: 14px;
   border: 1px solid var(--paper-line); border-radius: 8px; padding: 9px 10px;
-  background: #fffdf7; outline: none;
+  background: #fffdf7; outline: none; color: var(--ink);
 }
+.tracker-app[data-theme="white"] .tk-text-input, .tracker-app[data-theme="white"] .tk-date-input { background:#fafafa; }
 .tk-chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-.tk-chip {
-  font-size: 12.5px; padding: 7px 12px; border-radius: 999px;
-  border: 1px solid var(--paper-line); background: #fffdf7; color: var(--ink); cursor: pointer;
-}
+.tk-chip { font-size: 12.5px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--paper-line); background: #fffdf7; color: var(--ink); cursor: pointer; }
+.tracker-app[data-theme="white"] .tk-chip { background:#fafafa; }
 .tk-chip.sel { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .tk-chip.add-new { border-style: dashed; color: var(--muted); }
-.tk-modal-actions { display: flex; gap: 10px; margin-top: 6px; }
-.tk-btn {
-  flex: 1; padding: 12px; border-radius: 10px; border: none; cursor: pointer;
-  font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif;
-}
-.tk-btn.primary { background: var(--rust); color: #fff7ef; }
+.tk-btn { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif; }
+.tk-btn.primary { background: var(--accent); color: #fff7ef; width: 100%; }
 .tk-btn.ghost { background: none; border: 1px solid var(--paper-line); color: var(--muted); }
 
-.tk-cat-col { margin-bottom: 16px; }
+/* ---- Categories screen ---- */
+.tk-cat-col { margin-bottom: 18px; }
 .tk-cat-col h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 8px; }
-.tk-cat-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 10px; background: #fffdf7; border: 1px solid var(--paper-line);
-  border-radius: 8px; margin-bottom: 6px; font-size: 13px;
-}
+.tk-cat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fffdf7; border: 1px solid var(--paper-line); border-radius: 8px; margin-bottom: 6px; font-size: 13px; }
+.tracker-app[data-theme="white"] .tk-cat-item { background:#fafafa; }
 .tk-cat-item button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; }
 .tk-cat-add { display: flex; gap: 8px; margin-top: 6px; }
 .tk-cat-add input { flex: 1; }
+.tk-note-sm { font-size: 11px; color: var(--muted); margin-top: 6px; line-height:1.5; }
+.tk-backup-actions { display:flex; gap:8px; }
+.tk-backup-actions .tk-btn { flex:1; }
+
+/* ---- Profile screen ---- */
+.tk-profile-photo-row { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+.tk-big-avatar { width:72px; height:72px; border-radius:50%; background:var(--paper-line); display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer; border:2px solid var(--accent); flex-shrink:0; }
+.tk-big-avatar img { width:100%; height:100%; object-fit:cover; }
+.tk-big-avatar svg { width:30px; height:30px; color:var(--muted); }
+.tk-photo-hint { font-size:12px; color:var(--muted); }
+.tk-photo-hint b { color:var(--accent); cursor:pointer; }
+.tk-theme-grid { display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; }
+.tk-swatch { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; background:none; border:none; }
+.tk-swatch-circle { width:42px; height:42px; border-radius:50%; border:3px solid transparent; box-shadow:0 0 0 1px var(--paper-line); }
+.tk-swatch.active .tk-swatch-circle { border-color: var(--ink); }
+.tk-swatch span { font-size:11px; color:var(--muted); }
+
+/* ---- Bottom nav ---- */
+.tk-bottomnav { flex: 0 0 auto; display: flex; background: #fffdf7; border-top: 1px solid var(--paper-line); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tracker-app[data-theme="white"] .tk-bottomnav { background:#fafafa; }
+.tk-nav-btn { flex: 1; background: none; border: none; padding: 9px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; color: var(--muted); }
+.tk-nav-btn svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+.tk-nav-btn span { font-size: 10.5px; font-weight: 600; }
+.tk-nav-btn.active { color: var(--accent); }
+
+/* ---- Modal (for add-category inline field) ---- */
+.tk-overlay { position: fixed; inset: 0; background: rgba(20,18,14,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 50; }
+.tk-overlay.show { display: flex; }
+.tk-modal { background: var(--paper); width: 100%; max-width: 430px; border-radius: 18px 18px 0 0; padding: 18px 18px 22px; max-height: 86vh; overflow-y: auto; }
+.tk-modal h3 { font-family: 'Fraunces', serif; font-size: 17px; margin: 0 0 14px; }
+.tk-modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+.tk-modal-actions .tk-btn { flex: 1; }
 </style>
 
-<div class="tracker-app">
+<div class="tracker-app" data-theme="white" id="app">
 
-  <div class="tk-head">
-    <div class="tk-title">Dinesh's Money Tracker</div>
-    <div class="tk-month">
-      <button class="tk-arrow" id="prevMonth">&#8249;</button>
-      <span class="tk-month-label" id="monthLabel">June 2026</span>
-      <button class="tk-arrow" id="nextMonth">&#8250;</button>
-    </div>
-    <button class="tk-cat-link" id="openCats">Manage categories</button>
-  </div>
+  <div class="tk-screens">
 
-  <div class="tk-summary">
-    <div class="tk-card income"><div class="lbl">Income</div><div class="amt" id="sumIncome">&#8377;0</div></div>
-    <div class="tk-card expense"><div class="lbl">Expense</div><div class="amt" id="sumExpense">&#8377;0</div></div>
-    <div class="tk-card net"><div class="lbl">Net</div><div class="amt" id="sumNet">&#8377;0</div></div>
-  </div>
-
-  <button class="tk-add-btn" id="openAdd">+ Add Transaction</button>
-
-  <div class="tk-section">
-    <div class="tk-tabs">
-      <button class="tk-tab active" data-tab="expense">Where it went</button>
-      <button class="tk-tab" data-tab="income">Where it came from</button>
-    </div>
-    <div id="breakdown"></div>
-  </div>
-
-  <div id="txList"></div>
-
-  <!-- ADD TRANSACTION MODAL -->
-  <div class="tk-overlay" id="addOverlay">
-    <div class="tk-modal">
-      <h3>Add Transaction</h3>
-      <div class="tk-toggle">
-        <button id="toggleIncome" class="sel income">Income</button>
-        <button id="toggleExpense">Expense</button>
-      </div>
-      <div class="tk-field">
-        <label>Amount</label>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span class="mono" style="font-size:22px; color:var(--rust);">&#8377;</span>
-          <input type="number" class="tk-amt-input" id="txAmount" placeholder="0" min="0">
+    <!-- HOME -->
+    <section class="tk-screen active" id="screenHome">
+      <div class="tk-top">
+        <div class="tk-top-row">
+          <div class="tk-greet">
+            <div class="tk-avatar" id="homeAvatar">
+              <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+            </div>
+            <div class="tk-greet-text">
+              <div class="tk-greet-name" id="homeName">Hi there</div>
+              <div class="tk-greet-sub">Bookifyreach &middot; Fiverr</div>
+            </div>
+          </div>
+        </div>
+        <div class="tk-month">
+          <button class="tk-arrow" id="prevMonth">&#8249;</button>
+          <span class="tk-month-label" id="monthLabel">June 2026</span>
+          <button class="tk-arrow" id="nextMonth">&#8250;</button>
         </div>
       </div>
-      <div class="tk-field">
-        <label>Category</label>
-        <div class="tk-chip-grid" id="txCatChips"></div>
+
+      <div class="tk-summary">
+        <div class="tk-card income"><div class="lbl">Income</div><div class="amt" id="sumIncome">&#8377;0</div></div>
+        <div class="tk-card expense"><div class="lbl">Expense</div><div class="amt" id="sumExpense">&#8377;0</div></div>
+        <div class="tk-card net"><div class="lbl">Net</div><div class="amt" id="sumNet">&#8377;0</div></div>
       </div>
-      <div class="tk-field" id="newCatField" style="display:none;">
-        <label>New category name</label>
-        <input type="text" class="tk-text-input" id="newCatInput" placeholder="e.g. Travel">
+
+      <button class="tk-add-btn" id="goAdd">+ Add Transaction</button>
+
+      <div class="tk-section">
+        <div class="tk-tabs">
+          <button class="tk-tab active" data-tab="expense">Where it went</button>
+          <button class="tk-tab" data-tab="income">Where it came from</button>
+        </div>
+        <div id="breakdown"></div>
       </div>
-      <div class="tk-field">
-        <label>Note (optional)</label>
-        <input type="text" class="tk-text-input" id="txNote" placeholder="e.g. Quallie.AI payment">
+
+      <div id="txList"></div>
+    </section>
+
+    <!-- ADD -->
+    <section class="tk-screen" id="screenAdd">
+      <div class="tk-top"><div class="tk-title">Add Transaction</div></div>
+      <div class="tk-section">
+        <div class="tk-toggle">
+          <button id="toggleIncome" class="sel income">Income</button>
+          <button id="toggleExpense">Expense</button>
+        </div>
+        <div class="tk-field">
+          <label>Amount</label>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="mono" style="font-size:22px; color:var(--accent);">&#8377;</span>
+            <input type="number" class="tk-amt-input" id="txAmount" placeholder="0" min="0">
+          </div>
+        </div>
+        <div class="tk-field">
+          <label>Category</label>
+          <div class="tk-chip-grid" id="txCatChips"></div>
+        </div>
+        <div class="tk-field" id="newCatField" style="display:none;">
+          <label>New category name</label>
+          <input type="text" class="tk-text-input" id="newCatInput" placeholder="e.g. Travel">
+        </div>
+        <div class="tk-field">
+          <label>Note (optional)</label>
+          <input type="text" class="tk-text-input" id="txNote" placeholder="e.g. Quallie.AI payment">
+        </div>
+        <div class="tk-field">
+          <label>Date</label>
+          <input type="date" class="tk-date-input" id="txDate">
+        </div>
+        <button class="tk-btn primary" id="saveAdd">Save Transaction</button>
       </div>
-      <div class="tk-field">
-        <label>Date</label>
-        <input type="date" class="tk-date-input" id="txDate">
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="tk-screen" id="screenCategories">
+      <div class="tk-top"><div class="tk-title">Categories</div></div>
+      <div class="tk-section">
+        <div class="tk-cat-col">
+          <h4>Income</h4>
+          <div id="incomeCatList"></div>
+          <div class="tk-cat-add">
+            <input type="text" class="tk-text-input" id="newIncomeCat" placeholder="Add income category">
+            <button class="tk-btn primary" style="width:auto; padding:9px 14px;" id="addIncomeCat">Add</button>
+          </div>
+        </div>
+        <div class="tk-cat-col">
+          <h4>Expense</h4>
+          <div id="expenseCatList"></div>
+          <div class="tk-cat-add">
+            <input type="text" class="tk-text-input" id="newExpenseCat" placeholder="Add expense category">
+            <button class="tk-btn primary" style="width:auto; padding:9px 14px;" id="addExpenseCat">Add</button>
+          </div>
+        </div>
+        <div class="tk-cat-col">
+          <h4>Backup</h4>
+          <div class="tk-backup-actions">
+            <button class="tk-btn ghost" id="exportData">Export (.json)</button>
+            <button class="tk-btn ghost" id="importTrigger">Import</button>
+          </div>
+          <input type="file" id="importFile" accept="application/json" style="display:none;">
+          <div class="tk-note-sm">Data lives only on this device/browser. Export a backup now and then so you never lose it.</div>
+        </div>
       </div>
-      <div class="tk-modal-actions">
-        <button class="tk-btn ghost" id="cancelAdd">Cancel</button>
-        <button class="tk-btn primary" id="saveAdd">Save</button>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="tk-screen" id="screenProfile">
+      <div class="tk-top"><div class="tk-title">Profile &amp; Theme</div></div>
+      <div class="tk-section">
+        <div class="tk-profile-photo-row">
+          <div class="tk-big-avatar" id="profileAvatar">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+          </div>
+          <div class="tk-photo-hint">Tap the circle to add a photo, or <b id="removePhoto">remove it</b>.</div>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" style="display:none;">
+
+        <div class="tk-field">
+          <label>Name</label>
+          <input type="text" class="tk-text-input" id="profName" placeholder="Your name">
+        </div>
+        <div class="tk-field">
+          <label>Email</label>
+          <input type="email" class="tk-text-input" id="profEmail" placeholder="you@example.com">
+        </div>
+
+        <h3>Theme</h3>
+        <div class="tk-theme-grid" id="themeGrid"></div>
       </div>
-    </div>
+    </section>
+
   </div>
 
-  <!-- MANAGE CATEGORIES MODAL -->
-  <div class="tk-overlay" id="catOverlay">
-    <div class="tk-modal">
-      <h3>Manage Categories</h3>
-      <div class="tk-cat-col">
-        <h4>Income</h4>
-        <div id="incomeCatList"></div>
-        <div class="tk-cat-add">
-          <input type="text" class="tk-text-input" id="newIncomeCat" placeholder="Add income category">
-          <button class="tk-btn primary" style="flex:none; padding:9px 14px;" id="addIncomeCat">Add</button>
-        </div>
-      </div>
-      <div class="tk-cat-col">
-        <h4>Expense</h4>
-        <div id="expenseCatList"></div>
-        <div class="tk-cat-add">
-          <input type="text" class="tk-text-input" id="newExpenseCat" placeholder="Add expense category">
-          <button class="tk-btn primary" style="flex:none; padding:9px 14px;" id="addExpenseCat">Add</button>
-        </div>
-      </div>
-      <div class="tk-cat-col">
-        <h4>Backup</h4>
-        <div class="tk-modal-actions">
-          <button class="tk-btn ghost" id="exportData">Export backup (.json)</button>
-          <button class="tk-btn ghost" id="importTrigger">Import backup</button>
-        </div>
-        <input type="file" id="importFile" accept="application/json" style="display:none;">
-        <div style="font-size:11px; color:var(--muted); margin-top:6px;">Data lives only on this device/browser. Export a backup now and then so you never lose it.</div>
-      </div>
-      <div class="tk-modal-actions">
-        <button class="tk-btn ghost" id="closeCats" style="flex:1;">Done</button>
-      </div>
-    </div>
-  </div>
+  <nav class="tk-bottomnav">
+    <button class="tk-nav-btn active" data-screen="Home">
+      <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="tk-nav-btn" data-screen="Add">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      <span>Add</span>
+    </button>
+    <button class="tk-nav-btn" data-screen="Categories">
+      <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+      <span>Categories</span>
+    </button>
+    <button class="tk-nav-btn" data-screen="Profile">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <span>Profile</span>
+    </button>
+  </nav>
 
+  <!-- New-category quick modal trigger lives inline in Add screen, no separate modal needed -->
 </div>
 
 <script>
-  // Local-storage backed shim so the tracker works as a standalone app
-  // (mirrors the get/set/delete/list shape the tracker code expects)
-  window.storage = {
-    async get(key, shared){
-      const raw = localStorage.getItem('store:'+key);
-      if (raw === null) throw new Error('not found');
-      return { key, value: raw, shared: !!shared };
-    },
-    async set(key, value, shared){
-      localStorage.setItem('store:'+key, value);
-      return { key, value, shared: !!shared };
-    },
-    async delete(key, shared){
-      localStorage.removeItem('store:'+key);
-      return { key, deleted: true, shared: !!shared };
-    },
-    async list(prefix, shared){
-      const p = 'store:' + (prefix || '');
-      const keys = Object.keys(localStorage).filter(k => k.startsWith(p)).map(k => k.slice(6));
-      return { keys, prefix, shared: !!shared };
-    }
-  };
-</script>
-<script>
 (function(){
-  const root = document;
-  const $ = (id) => root.getElementById(id);
-  const STORAGE_KEY = 'dinesh-tracker-v1';
+  const $ = (id) => document.getElementById(id);
+  const STORAGE_KEY = 'dinesh-tracker-v2';
   const PALETTE = ['#b3502f','#b9842c','#4f6e49','#5b7fa6','#8a5fa3','#c2785c','#3f8f86','#a14b6d','#7d8c3c','#bb6b9b'];
+  const THEMES = [
+    {id:'green', label:'Green', swatch:'#15301f'},
+    {id:'yellow', label:'Yellow', swatch:'#c9821a'},
+    {id:'red', label:'Red', swatch:'#b8312f'},
+    {id:'white', label:'White', swatch:'#202020'},
+    {id:'blue', label:'Blue', swatch:'#2f6fa8'}
+  ];
 
   const defaultState = {
     transactions: [],
     incomeCategories: ['Bookifyreach','Fiverr','Other'],
     expenseCategories: ['Rent','Mom/Family','Food','Transport','Bills','Shopping','Savings/Investment','Tax','Other'],
-    nextId: 1
+    nextId: 1,
+    profile: { name: '', email: '', photo: '' },
+    theme: 'white'
   };
 
   let state = JSON.parse(JSON.stringify(defaultState));
-  let viewYear, viewMonth; // 0-indexed month
+  let viewYear, viewMonth;
   let activeTab = 'expense';
   let modalType = 'income';
   let modalCategory = null;
@@ -354,16 +388,11 @@
     const sign = n < 0 ? '-' : '';
     return sign + '\u20B9' + Math.abs(n).toLocaleString('en-IN');
   }
-
   function colorFor(catList, name){
     const idx = catList.indexOf(name);
     return PALETTE[(idx >= 0 ? idx : 0) % PALETTE.length];
   }
-
-  function monthLabel(y,m){
-    return new Date(y,m,1).toLocaleString('en-US',{month:'long', year:'numeric'});
-  }
-
+  function monthLabel(y,m){ return new Date(y,m,1).toLocaleString('en-US',{month:'long', year:'numeric'}); }
   function txInView(){
     return state.transactions.filter(t => {
       const d = new Date(t.date);
@@ -371,16 +400,29 @@
     });
   }
 
-  function render(){
+  // ---------- Navigation between screens ----------
+  function showScreen(name){
+    document.querySelectorAll('.tk-screen').forEach(s => s.classList.remove('active'));
+    $('screen'+name).classList.add('active');
+    document.querySelectorAll('.tk-nav-btn').forEach(b => b.classList.toggle('active', b.dataset.screen === name));
+    if (name === 'Categories') renderCatManager();
+    if (name === 'Profile') renderProfile();
+    if (name === 'Add') openAddForm();
+  }
+  document.querySelectorAll('.tk-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+  });
+  $('goAdd').addEventListener('click', () => showScreen('Add'));
+
+  // ---------- Home render ----------
+  function renderHome(){
     $('monthLabel').textContent = monthLabel(viewYear, viewMonth);
     const txs = txInView();
-
     let income = 0, expense = 0;
     txs.forEach(t => { if (t.type === 'income') income += t.amount; else expense += t.amount; });
     $('sumIncome').textContent = fmt(income);
     $('sumExpense').textContent = fmt(expense);
     $('sumNet').textContent = fmt(income - expense);
-
     renderBreakdown(txs, income, expense);
     renderTxList(txs);
   }
@@ -390,9 +432,7 @@
     const cats = type === 'income' ? state.incomeCategories : state.expenseCategories;
     const total = type === 'income' ? incomeTotal : expenseTotal;
     const sums = {};
-    txs.filter(t => t.type === type).forEach(t => {
-      sums[t.category] = (sums[t.category] || 0) + t.amount;
-    });
+    txs.filter(t => t.type === type).forEach(t => { sums[t.category] = (sums[t.category] || 0) + t.amount; });
     const entries = Object.keys(sums).map(name => ({name, amt: sums[name]})).sort((a,b)=>b.amt-a.amt);
     const box = $('breakdown');
     box.innerHTML = '';
@@ -422,14 +462,10 @@
     }
     const sorted = [...txs].sort((a,b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
     const groups = {};
-    sorted.forEach(t => {
-      const key = t.date;
-      (groups[key] = groups[key] || []).push(t);
-    });
+    sorted.forEach(t => { (groups[t.date] = groups[t.date] || []).push(t); });
     Object.keys(groups).sort((a,b) => new Date(b)-new Date(a)).forEach(dateKey => {
       const dLabel = new Date(dateKey).toLocaleDateString('en-US', {day:'numeric', month:'short'});
       const dayWrap = document.createElement('div');
-      dayWrap.className = 'tk-day-group';
       dayWrap.innerHTML = '<div class="tk-day-label">' + dLabel + '</div>';
       groups[dateKey].forEach(t => {
         const cats = t.type === 'income' ? state.incomeCategories : state.expenseCategories;
@@ -446,84 +482,44 @@
       });
       list.appendChild(dayWrap);
     });
-
     list.querySelectorAll('.tk-del').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.classList.contains('confirm')){
           state.transactions = state.transactions.filter(t => t.id !== Number(btn.dataset.id));
-          persist(); render();
+          persist(); renderHome();
         } else {
-          btn.classList.add('confirm');
-          btn.textContent = 'Delete?';
+          btn.classList.add('confirm'); btn.textContent = 'Delete?';
           setTimeout(() => { btn.classList.remove('confirm'); btn.textContent = '\u00d7'; }, 2500);
         }
       });
     });
   }
 
-  let saveTimer = null;
-  function persist(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => {
-      try { if (window.storage && window.storage.set) await window.storage.set(STORAGE_KEY, JSON.stringify(state)); }
-      catch(e){ /* storage unavailable */ }
-    }, 300);
-  }
-
-  async function loadState(){
-    try {
-      if (window.storage && window.storage.get){
-        const res = await window.storage.get(STORAGE_KEY);
-        if (res && res.value){
-          const parsed = JSON.parse(res.value);
-          state = Object.assign({}, defaultState, parsed);
-        }
-      }
-    } catch(e){ /* no saved state yet */ }
-    render();
-  }
-
-  // ---- Month nav ----
-  $('prevMonth').addEventListener('click', () => {
-    viewMonth--; if (viewMonth < 0){ viewMonth = 11; viewYear--; }
-    render();
-  });
-  $('nextMonth').addEventListener('click', () => {
-    viewMonth++; if (viewMonth > 11){ viewMonth = 0; viewYear++; }
-    render();
-  });
-
-  // ---- Tabs ----
-  root.querySelectorAll('.tk-tab').forEach(tab => {
+  $('prevMonth').addEventListener('click', () => { viewMonth--; if (viewMonth<0){viewMonth=11; viewYear--;} renderHome(); });
+  $('nextMonth').addEventListener('click', () => { viewMonth++; if (viewMonth>11){viewMonth=0; viewYear++;} renderHome(); });
+  document.querySelectorAll('.tk-tab').forEach(tab => {
     tab.addEventListener('click', () => {
-      root.querySelectorAll('.tk-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tk-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       activeTab = tab.dataset.tab;
-      render();
+      renderHome();
     });
   });
 
-  // ---- Add Transaction modal ----
-  function openAddModal(){
-    modalType = 'income';
-    modalCategory = null;
-    $('txAmount').value = '';
-    $('txNote').value = '';
+  // ---------- Add screen ----------
+  function openAddForm(){
+    modalType = 'income'; modalCategory = null;
+    $('txAmount').value = ''; $('txNote').value = '';
     $('txDate').value = new Date().toISOString().slice(0,10);
-    $('newCatField').style.display = 'none';
-    $('newCatInput').value = '';
+    $('newCatField').style.display = 'none'; $('newCatInput').value = '';
     setModalType('income');
-    $('addOverlay').classList.add('show');
   }
-  function closeAddModal(){ $('addOverlay').classList.remove('show'); }
-
   function setModalType(type){
     modalType = type;
     $('toggleIncome').className = type==='income' ? 'sel income' : '';
     $('toggleExpense').className = type==='expense' ? 'sel expense' : '';
     renderCatChips();
   }
-
   function renderCatChips(){
     const cats = modalType === 'income' ? state.incomeCategories : state.expenseCategories;
     const grid = $('txCatChips');
@@ -532,29 +528,17 @@
       const chip = document.createElement('button');
       chip.className = 'tk-chip' + (modalCategory === c ? ' sel' : '');
       chip.textContent = c;
-      chip.addEventListener('click', () => {
-        modalCategory = c;
-        $('newCatField').style.display = 'none';
-        renderCatChips();
-      });
+      chip.addEventListener('click', () => { modalCategory = c; $('newCatField').style.display = 'none'; renderCatChips(); });
       grid.appendChild(chip);
     });
     const addChip = document.createElement('button');
     addChip.className = 'tk-chip add-new';
     addChip.textContent = '+ New';
-    addChip.addEventListener('click', () => {
-      modalCategory = null;
-      $('newCatField').style.display = 'block';
-      renderCatChips();
-    });
+    addChip.addEventListener('click', () => { modalCategory = null; $('newCatField').style.display = 'block'; renderCatChips(); });
     grid.appendChild(addChip);
   }
-
-  $('openAdd').addEventListener('click', openAddModal);
-  $('cancelAdd').addEventListener('click', closeAddModal);
   $('toggleIncome').addEventListener('click', () => setModalType('income'));
   $('toggleExpense').addEventListener('click', () => setModalType('expense'));
-
   $('saveAdd').addEventListener('click', () => {
     const amount = Number($('txAmount').value);
     if (!amount || amount <= 0){ $('txAmount').focus(); return; }
@@ -565,29 +549,20 @@
       if (modalType === 'income') state.incomeCategories.push(category);
       else state.expenseCategories.push(category);
     }
-    if (!category){ return; }
-    const tx = {
-      id: state.nextId++,
-      type: modalType,
-      amount: amount,
-      category: category,
-      note: $('txNote').value.trim(),
-      date: $('txDate').value || new Date().toISOString().slice(0,10)
-    };
+    if (!category) return;
+    const tx = { id: state.nextId++, type: modalType, amount, category, note: $('txNote').value.trim(), date: $('txDate').value || new Date().toISOString().slice(0,10) };
     state.transactions.push(tx);
     persist();
-    closeAddModal();
     const d = new Date(tx.date);
     viewYear = d.getFullYear(); viewMonth = d.getMonth();
-    render();
+    renderHome();
+    showScreen('Home');
   });
 
-  // ---- Manage Categories modal ----
+  // ---------- Categories screen ----------
   function renderCatManager(){
-    const incBox = $('incomeCatList');
-    const expBox = $('expenseCatList');
-    incBox.innerHTML = '';
-    expBox.innerHTML = '';
+    const incBox = $('incomeCatList'); const expBox = $('expenseCatList');
+    incBox.innerHTML = ''; expBox.innerHTML = '';
     state.incomeCategories.forEach(c => {
       const row = document.createElement('div');
       row.className = 'tk-cat-item';
@@ -600,82 +575,132 @@
       row.innerHTML = '<span>'+c+'</span><button data-type="expense" data-name="'+c+'">&times;</button>';
       expBox.appendChild(row);
     });
-    root.querySelectorAll('#incomeCatList button, #expenseCatList button').forEach(btn => {
+    document.querySelectorAll('#incomeCatList button, #expenseCatList button').forEach(btn => {
       btn.addEventListener('click', () => {
         const type = btn.dataset.type, name = btn.dataset.name;
         if (type === 'income') state.incomeCategories = state.incomeCategories.filter(c => c !== name);
         else state.expenseCategories = state.expenseCategories.filter(c => c !== name);
-        persist();
-        renderCatManager();
-        render();
+        persist(); renderCatManager(); renderHome();
       });
     });
   }
-
-  $('openCats').addEventListener('click', () => { renderCatManager(); $('catOverlay').classList.add('show'); });
-  $('closeCats').addEventListener('click', () => $('catOverlay').classList.remove('show'));
-
+  $('addIncomeCat').addEventListener('click', () => {
+    const v = $('newIncomeCat').value.trim();
+    if (v && !state.incomeCategories.includes(v)){ state.incomeCategories.push(v); $('newIncomeCat').value=''; persist(); renderCatManager(); }
+  });
+  $('addExpenseCat').addEventListener('click', () => {
+    const v = $('newExpenseCat').value.trim();
+    if (v && !state.expenseCategories.includes(v)){ state.expenseCategories.push(v); $('newExpenseCat').value=''; persist(); renderCatManager(); }
+  });
   $('exportData').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const stamp = new Date().toISOString().slice(0,10);
-    a.href = url;
-    a.download = 'money-tracker-backup-' + stamp + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = 'money-tracker-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
   });
-
   $('importTrigger').addEventListener('click', () => $('importFile').click());
-
   $('importFile').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       try {
         const parsed = JSON.parse(reader.result);
         if (!Array.isArray(parsed.transactions)) throw new Error('bad file');
         state = Object.assign({}, defaultState, parsed);
-        persist();
-        renderCatManager();
-        render();
-      } catch(err){
-        $('importFile').value = '';
-      }
+        persist(); applyTheme(); renderCatManager(); renderHome(); renderProfile(); renderHomeHeader();
+      } catch(err){ $('importFile').value = ''; }
     };
     reader.readAsText(file);
   });
 
-  $('addIncomeCat').addEventListener('click', () => {
-    const v = $('newIncomeCat').value.trim();
-    if (v && !state.incomeCategories.includes(v)){
-      state.incomeCategories.push(v);
-      $('newIncomeCat').value = '';
-      persist(); renderCatManager();
-    }
-  });
-  $('addExpenseCat').addEventListener('click', () => {
-    const v = $('newExpenseCat').value.trim();
-    if (v && !state.expenseCategories.includes(v)){
-      state.expenseCategories.push(v);
-      $('newExpenseCat').value = '';
-      persist(); renderCatManager();
-    }
-  });
-
-  loadState();
-})();
-</script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(()=>{});
+  // ---------- Profile screen ----------
+  function renderHomeHeader(){
+    $('homeName').textContent = state.profile.name ? ('Hi, ' + state.profile.name) : 'Hi there';
+    const avatars = [$('homeAvatar'), $('profileAvatar')];
+    avatars.forEach(el => {
+      if (state.profile.photo){
+        el.innerHTML = '<img src="'+state.profile.photo+'" alt="profile">';
+      } else {
+        el.innerHTML = '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>';
+      }
     });
   }
+  function renderProfile(){
+    $('profName').value = state.profile.name || '';
+    $('profEmail').value = state.profile.email || '';
+    renderHomeHeader();
+    renderThemeGrid();
+  }
+  function renderThemeGrid(){
+    const grid = $('themeGrid');
+    grid.innerHTML = '';
+    THEMES.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'tk-swatch' + (state.theme === t.id ? ' active' : '');
+      btn.innerHTML = '<span class="tk-swatch-circle" style="background:'+t.swatch+'"></span><span>'+t.label+'</span>';
+      btn.addEventListener('click', () => { state.theme = t.id; applyTheme(); persist(); renderThemeGrid(); });
+      grid.appendChild(btn);
+    });
+  }
+  function applyTheme(){ $('app').setAttribute('data-theme', state.theme); }
+
+  $('profName').addEventListener('input', (e) => { state.profile.name = e.target.value; renderHomeHeader(); persist(); });
+  $('profEmail').addEventListener('input', (e) => { state.profile.email = e.target.value; persist(); });
+
+  function resizePhoto(file, cb){
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 160;
+        const canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        const scale = Math.max(size/img.width, size/img.height);
+        const w = img.width*scale, h = img.height*scale;
+        ctx.drawImage(img, (size-w)/2, (size-h)/2, w, h);
+        cb(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  $('profileAvatar').addEventListener('click', () => $('photoInput').click());
+  $('homeAvatar').addEventListener('click', () => showScreen('Profile'));
+  $('photoInput').addEventListener('change', (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    resizePhoto(file, (dataUrl) => { state.profile.photo = dataUrl; renderHomeHeader(); persist(); });
+  });
+  $('removePhoto').addEventListener('click', () => { state.profile.photo = ''; renderHomeHeader(); persist(); });
+
+  // ---------- Persistence (localStorage, works as a standalone installed app) ----------
+  let saveTimer = null;
+  function persist(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){ /* storage unavailable */ }
+    }, 300);
+  }
+  function loadState(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) state = Object.assign({}, defaultState, JSON.parse(raw));
+    } catch(e){ /* no saved state yet */ }
+    if (!state.profile) state.profile = { name:'', email:'', photo:'' };
+    if (!state.theme) state.theme = 'white';
+    applyTheme();
+    renderHome();
+    renderHomeHeader();
+  }
+
+  loadState();
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+  }
+})();
 </script>
 </body>
 </html>
