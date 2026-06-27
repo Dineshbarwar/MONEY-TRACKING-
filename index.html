@@ -327,8 +327,8 @@
 </script>
 <script>
 (function(){
-  const root = document.currentScript.previousElementSibling;
-  const $ = (id) => root.querySelector('#'+id);
+  const root = document;
+  const $ = (id) => root.getElementById(id);
   const STORAGE_KEY = 'dinesh-tracker-v1';
   const PALETTE = ['#b3502f','#b9842c','#4f6e49','#5b7fa6','#8a5fa3','#c2785c','#3f8f86','#a14b6d','#7d8c3c','#bb6b9b'];
 
